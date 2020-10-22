@@ -235,7 +235,10 @@ public class main {
 
     private static void step1(String stringN){
         n = convertToBigInteger(stringN);
+        long startTime = System.currentTimeMillis();
         BigInteger[] primesN = findPrimeFactors(n);
+        long endTime = System.currentTimeMillis();
+        System.out.println("Amount of time busy finding p and q: " + (endTime-startTime));
         if (primesN.length == 2){
             p = primesN[1];
             q = primesN[0];
@@ -326,15 +329,14 @@ public class main {
     private static BigInteger[] findPrimeFactors(BigInteger x) {
         List<BigInteger> factorList = new ArrayList<BigInteger>();
         if (x.signum() == 1){//should be true when not -1
-            // Print the number of 2s that divide n
+
+            BigInteger originalX = x;
 
             BigInteger bi2 = new BigInteger("2");
             while (x.mod(bi2).equals(BigInteger.ZERO)) {
                 factorList.add(bi2);
                 x = x.divide(bi2);
             }
-
-            BigInteger originalX = x;
 
             // skip one element (Note i = i +2)
             for (BigInteger bi = BigInteger.valueOf(3);
@@ -373,7 +375,7 @@ public class main {
         BigInteger gcdEPhi = BigInteger.ZERO;
 
         while (x.compareTo(BigInteger.ZERO) == 0 || gcdEPhi.compareTo(BigInteger.ONE) != 0 || x.compareTo(n) > 0){
-            BigInteger maxLimit = n;
+            BigInteger maxLimit = phi;
             Random randNum = new Random();
 
             int len = maxLimit.bitLength();
@@ -400,24 +402,23 @@ public class main {
 
     private static BigInteger[] encryptMessage() {
         BigInteger[] x = new BigInteger[m.length];
-
         for(int i = 0 ; i < m.length; i++){
-            x[i] = m[i].pow(e.intValue()).mod(n);;
+            x[i] = m[i].modPow(e, n);
         }
         return x;
     }
 
     private static BigInteger calculateD(){
-
+        BigInteger counter = BigInteger.ZERO;
         BigDecimal k = BigDecimal.ONE;
         BigDecimal localD = BigDecimal.ZERO;
-
         while (k.compareTo(BigDecimal.ONE) == 0 || !isIntegerValue(localD)){
             localD = k
                     .multiply(new BigDecimal(dePhi))
                     .add(BigDecimal.ONE)
                     .divide(new BigDecimal(deE),100, RoundingMode.HALF_UP);
             k = k.add(BigDecimal.ONE);
+            counter = counter.add(BigInteger.ONE);
         }
         return localD.toBigInteger();
     }
