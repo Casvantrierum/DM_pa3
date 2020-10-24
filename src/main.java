@@ -34,6 +34,10 @@ public class main {
     private static JButton step2DCButton = new JButton("Step 2");
     private static JLabel labelDEM = new JLabel();
 
+    //error tooltip
+    private static JLabel errorLabelD = new JLabel("-");
+    private static JLabel errorLabelE = new JLabel("-");
+
     //encryption variables
     private static BigInteger n;
     private static BigInteger p;
@@ -95,7 +99,7 @@ public class main {
         // Creating JLabel
         JLabel titleEncryption = new JLabel("Decryption");
         titleEncryption.setFont(new Font("Calibri", Font.BOLD, 30));
-        titleEncryption.setBounds(10,10,300,40);
+        titleEncryption.setBounds(10,10,300,30);
         panel.add(titleEncryption);
 
         // Creating JLabel
@@ -147,6 +151,9 @@ public class main {
 
         labelDEM.setBounds(10,240,300,25);
         panel.add(labelDEM);
+
+        errorLabelD.setBounds(10, 35, 500, 20);
+        panel.add(errorLabelD);
     }
 
     private static void placeComponentsEC(JPanel panel) {
@@ -156,7 +163,7 @@ public class main {
         // Creating JLabel
         JLabel titleEncryption = new JLabel("Encryption");
         titleEncryption.setFont(new Font("Calibri", Font.BOLD, 30));
-        titleEncryption.setBounds(10,10,300,40);
+        titleEncryption.setBounds(10,10,300,30);
         panel.add(titleEncryption);
 
         // Creating JLabel
@@ -231,6 +238,9 @@ public class main {
         labelC.setEditable(false);
         labelC.hide();
         panel.add(labelC);
+
+        errorLabelE.setBounds(10, 35, 500, 20);
+        panel.add(errorLabelE);
     }
 
     private static void step1(String stringN){
@@ -251,9 +261,11 @@ public class main {
             step2Button.show();
         }
         else if(primesN.length > 2){
-            System.out.println("TOO MANY N PRIMES");
+            errorLabelE.setText("Error: TOO MANY N PRIMES");
+            //System.out.println("TOO MANY N PRIMES");
         }
-        else System.out.println("TO LESS N PRIMES");
+        else errorLabelE.setText("Error: NOT ENOUGH N PRIMES");
+            //System.out.println("NOT ENOUGH N PRIMES");
     }
 
     private static void step2(){
@@ -287,6 +299,7 @@ public class main {
                 deQ = primesN[0];
 
                 dePhi = calculatePhi(deP, deQ);
+                errorLabelD.setText("dePhi: "+dePhi);
                 System.out.println("dePhi"+ dePhi);
 
                 deD = calculateD();
@@ -297,10 +310,12 @@ public class main {
                 step2DCButton.show();
             }
             else {
-                System.out.println("more or less than 2 prime factors, so this n is incorrect");
+                errorLabelD.setText("Error: Exactly 2 prime factors required for N");
+                //System.out.println("more or less than 2 prime factors, so this n is incorrect");
             }
         }
-        else System.out.println("this is not going to work witha correct n or e");
+        else errorLabelD.setText("Error: Proper n and e required");
+            //System.out.println("this is not going to work witha correct n or e");
     }
 
     private static void step2DC(String stringN){
@@ -354,7 +369,7 @@ public class main {
             }
         }
         else {
-            System.out.println("non numeric value");
+            errorLabelE.setText("Error: non-numeric value");
         }
 
         BigInteger[] result = new BigInteger[factorList.size()];
