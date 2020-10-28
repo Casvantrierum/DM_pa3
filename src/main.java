@@ -5,38 +5,37 @@ import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.security.MessageDigest;
 import java.util.*;
 import java.util.List;
 
 public class main {
 
     //encryption components
-    private static JPanel panelEC = new JPanel();
-    private static JPanel panelDC = new JPanel();
-    private static JLabel labelP = new JLabel();
-    private static JLabel labelQ = new JLabel();
-    private static JLabel labelPhi = new JLabel();
-    private static JLabel labelPhiFactors = new JLabel();
-    private static JLabel labelE = new JLabel();
-    private static JButton step2Button = new JButton("Step 2");
-    private static JLabel labelInputM = new JLabel("m:");
-    private static JTextField textM = new JTextField(20);
-    private static JButton step3Button = new JButton("Step 3");
-    private static JTextArea labelM = new JTextArea();
-    private static JTextArea labelC = new JTextArea();
+    private static final JPanel panelEC = new JPanel();
+    private static final JPanel panelDC = new JPanel();
+    private static final JLabel labelP = new JLabel();
+    private static final JLabel labelQ = new JLabel();
+    private static final JLabel labelPhi = new JLabel();
+    private static final JLabel labelPhiFactors = new JLabel();
+    private static final JLabel labelE = new JLabel();
+    private static final JButton step2Button = new JButton("Step 2");
+    private static final JLabel labelInputM = new JLabel("m:");
+    private static final JTextField textM = new JTextField(20);
+    private static final JButton step3Button = new JButton("Step 3");
+    private static final JTextArea labelM = new JTextArea();
+    private static final JTextArea labelC = new JTextArea();
 
     //decryption components
-    private static JButton step1DCButton = new JButton("Step 1");
-    private static JLabel labelDED = new JLabel();
-    private static JLabel labelDEInputC = new JLabel("c:");
-    private static JTextField textDEC = new JTextField(20);
-    private static JButton step2DCButton = new JButton("Step 2");
-    private static JLabel labelDEM = new JLabel();
+    private static final JButton step1DCButton = new JButton("Step 1");
+    private static final JLabel labelDED = new JLabel();
+    private static final JLabel labelDEInputC = new JLabel("c:");
+    private static final JTextField textDEC = new JTextField(20);
+    private static final JButton step2DCButton = new JButton("Step 2");
+    private static final JLabel labelDEM = new JLabel();
 
     //error tooltip
-    private static JLabel errorLabelD = new JLabel("-");
-    private static JLabel errorLabelE = new JLabel("-");
+    private static final JLabel errorLabelDecrypt = new JLabel("");
+    private static final JLabel errorLabelEncrypt = new JLabel("");
 
     //encryption variables
     private static BigInteger n;
@@ -120,12 +119,7 @@ public class main {
         panel.add(textDEE);
 
         step1DCButton.setBounds(10,120,100,25);
-        step1DCButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                step1DC(textDEN.getText(), textDEE.getText());
-            }
-        });
+        step1DCButton.addActionListener(e -> step1DC(textDEN.getText(), textDEE.getText()));
         panel.add(step1DCButton);
 
         labelDED.setBounds(10,150,300,25);
@@ -140,20 +134,16 @@ public class main {
         panel.add(textDEC);
 
         step2DCButton.setBounds(10,210,100,25);
-        step2DCButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                step2DC(textDEC.getText());
-            }
-        });
+        step2DCButton.addActionListener(e -> step2DC(textDEC.getText()));
         step2DCButton.hide();
         panel.add(step2DCButton);
 
         labelDEM.setBounds(10,240,300,25);
         panel.add(labelDEM);
 
-        errorLabelD.setBounds(10, 35, 500, 20);
-        panel.add(errorLabelD);
+        errorLabelDecrypt.setBounds(10, 35, 500, 20);
+        errorLabelDecrypt.setForeground(Color.RED);
+        panel.add(errorLabelDecrypt);
     }
 
     private static void placeComponentsEC(JPanel panel) {
@@ -239,17 +229,21 @@ public class main {
         labelC.hide();
         panel.add(labelC);
 
-        errorLabelE.setBounds(10, 35, 500, 20);
-        panel.add(errorLabelE);
+        errorLabelEncrypt.setBounds(10, 35, 500, 20);
+        errorLabelEncrypt.setForeground(Color.RED);
+        panel.add(errorLabelEncrypt);
     }
 
     private static void step1(String stringN){
+
+        errorLabelEncrypt.setText("");
+        
         n = convertToBigInteger(stringN);
         long startTime = System.currentTimeMillis();
         BigInteger[] primesN = findPrimeFactors(n);
         long endTime = System.currentTimeMillis();
         System.out.println("Amount of time busy finding p and q: " + (endTime-startTime));
-        if (primesN.length == 2){
+        if (primesN.length == 2 && n.signum() == 1){
             p = primesN[1];
             q = primesN[0];
 
@@ -263,15 +257,19 @@ public class main {
             labelQ.setText("q is " + q);
             step2Button.show();
         }
-        else if(primesN.length > 2){
-            errorLabelE.setText("Error: TOO MANY N PRIMES");
-            //System.out.println("TOO MANY N PRIMES");
+        else if(n.signum() != 1){
+            errorLabelEncrypt.setText("Error: non-numeric value");
         }
-        else errorLabelE.setText("Error: NOT ENOUGH N PRIMES");
-            //System.out.println("NOT ENOUGH N PRIMES");
+        else if(primesN.length > 2){
+            errorLabelEncrypt.setText("Error: Too many n primes");
+        }
+        else errorLabelEncrypt.setText("Error: not enough n primes");
     }
 
     private static void step2(){
+
+        errorLabelEncrypt.setText("");
+
         e = generateE();
         labelE.setText("e is " + e);
         labelInputM.show();
@@ -280,6 +278,9 @@ public class main {
     }
 
     private static void step3(String mText){
+
+        errorLabelEncrypt.setText("");
+
         m = convertToBigIntegerArray(mText);
         labelM.show();
         labelM.setText("m is " + Arrays.toString(m));
@@ -290,6 +291,8 @@ public class main {
     }
 
     private static void step1DC(String stringN, String stringE){
+
+        errorLabelDecrypt.setText("");
 
         deN = convertToBigInteger(stringN);
         deE = convertToBigInteger(stringE);
@@ -302,8 +305,6 @@ public class main {
                 deQ = primesN[0];
 
                 dePhi = calculatePhi(deP, deQ);
-                errorLabelD.setText("dePhi: "+dePhi);
-                System.out.println("dePhi"+ dePhi);
 
                 deD = calculateD();
                 labelDED.setText("d is " + deD);
@@ -313,15 +314,16 @@ public class main {
                 step2DCButton.show();
             }
             else {
-                errorLabelD.setText("Error: Exactly 2 prime factors required for N");
-                //System.out.println("more or less than 2 prime factors, so this n is incorrect");
+                errorLabelDecrypt.setText("Error: Exactly 2 prime factors required for N");
             }
         }
-        else errorLabelD.setText("Error: Proper n and e required");
-            //System.out.println("this is not going to work witha correct n or e");
+        else errorLabelDecrypt.setText("Error: Proper n and e required");
     }
 
     private static void step2DC(String stringN){
+
+        errorLabelDecrypt.setText("");
+
         deC = convertCodeToBigIntegerArray(stringN);
         deM = decryptMessage();
 
@@ -334,8 +336,7 @@ public class main {
 
     private static BigInteger convertToBigInteger(String stringN){
         try {
-            BigInteger bigInt = new BigInteger(stringN);
-            return bigInt;
+            return new BigInteger(stringN);
         } catch (NumberFormatException nfe) {
             return new BigInteger("-1");
         }
@@ -371,7 +372,7 @@ public class main {
             }
         }
         else {
-            errorLabelE.setText("Error: non-numeric value");
+            errorLabelEncrypt.setText("Error: non-numeric value");
         }
 
         BigInteger[] result = new BigInteger[factorList.size()];
@@ -424,7 +425,7 @@ public class main {
     }
 
     private static BigInteger calculateD(){
-        BigInteger counter = BigInteger.ZERO;
+        long startTime = System.currentTimeMillis();
         BigDecimal k = BigDecimal.ONE;
         BigDecimal localD = BigDecimal.ZERO;
         while (k.compareTo(BigDecimal.ONE) == 0 || !isIntegerValue(localD)){
@@ -433,8 +434,9 @@ public class main {
                     .add(BigDecimal.ONE)
                     .divide(new BigDecimal(deE),100, RoundingMode.HALF_UP);
             k = k.add(BigDecimal.ONE);
-            counter = counter.add(BigInteger.ONE);
         }
+        long endTime = System.currentTimeMillis();
+        System.out.println("Amount of time busy finding d: " + (endTime-startTime));
         return localD.toBigInteger();
     }
 
@@ -443,11 +445,11 @@ public class main {
     }
 
     private static BigInteger[] convertCodeToBigIntegerArray(String stringCode){
-
-        stringCode = stringCode.replaceAll("\\s", "");
-
+        stringCode = stringCode
+                .replaceAll("\\s", "")
+                .replaceAll("\\[", "")
+                .replaceAll("]", "");
         String[] arrOfStr = stringCode.split(",");
-
         BigInteger[] result =  new BigInteger[arrOfStr.length];
 
         for (int i = 0; i < arrOfStr.length ; i++){
