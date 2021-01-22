@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,18 +21,23 @@ public class main {
     private static final JLabel labelE = new JLabel();
     private static final JButton step2Button = new JButton("Step 2");
     private static final JLabel labelInputM = new JLabel("m:");
-    private static final JTextField textM = new JTextField(20);
+    private static final JTextArea textM = new JTextArea();
     private static final JButton step3Button = new JButton("Step 3");
     private static final JTextArea labelM = new JTextArea();
     private static final JTextArea labelC = new JTextArea();
+    private static JScrollPane scrollerLabelM = new JScrollPane();
+    private static JScrollPane scrollerLabelC = new JScrollPane();
+    private static JScrollPane scrollerTextM = new JScrollPane();
 
     //decryption components
     private static final JButton step1DCButton = new JButton("Step 1");
     private static final JLabel labelDED = new JLabel();
     private static final JLabel labelDEInputC = new JLabel("c:");
-    private static final JTextField textDEC = new JTextField(20);
+    private static final JTextArea textDEC = new JTextArea();
+    private static JScrollPane scrollerLabelDEC = new JScrollPane();
     private static final JButton step2DCButton = new JButton("Step 2");
-    private static final JLabel labelDEM = new JLabel();
+    private static final JTextArea labelDEM = new JTextArea();
+    private static JScrollPane scrollerLabelDEM = new JScrollPane();
 
     //error tooltip
     private static final JLabel errorLabelDecrypt = new JLabel("");
@@ -83,8 +89,8 @@ public class main {
         frame.add(panelDC);
 
 //        frame.pack();
-        frame.setSize(600, 600);
-        frame.setMinimumSize(new Dimension(600, 600));
+        frame.setSize(800, 800);
+        frame.setMinimumSize(new Dimension(800, 800));
         frame.setVisible(true);
     }
 
@@ -129,17 +135,31 @@ public class main {
         labelDEInputC.hide();
         panel.add(labelDEInputC);
 
-        textDEC.setBounds(40,180,210,25);
+        textDEC.setBounds(10,210,300,50);
+        textDEC.setLineWrap(true);
         textDEC.hide();
         panel.add(textDEC);
 
-        step2DCButton.setBounds(10,210,100,25);
+        scrollerLabelDEC = new JScrollPane(textDEC, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollerLabelDEC.setBounds(10,210,300,50);
+        scrollerLabelDEC.hide();
+        panel.add(scrollerLabelDEC);
+
+        step2DCButton.setBounds(10,260,100,25);
         step2DCButton.addActionListener(e -> step2DC(textDEC.getText()));
         step2DCButton.hide();
         panel.add(step2DCButton);
 
-        labelDEM.setBounds(10,240,300,25);
+        labelDEM.setBounds(10,290,300,300);
+        labelDEM.setEditable(false);
+        labelDEM.setLineWrap(true);
+        labelDEM.setBorder(new EmptyBorder(10, 10, 10, 10));
         panel.add(labelDEM);
+
+        scrollerLabelDEM = new JScrollPane(labelDEM, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollerLabelDEM.setBounds(10,290,300,300);
+        scrollerLabelDEM.hide();
+        panel.add(scrollerLabelDEM);
 
         errorLabelDecrypt.setBounds(10, 35, 500, 20);
         errorLabelDecrypt.setForeground(Color.RED);
@@ -203,11 +223,17 @@ public class main {
         labelInputM.hide();
         panel.add(labelInputM);
 
-        textM.setBounds(40,280,70,25);
+        textM.setBounds(10,310,300,100);
+        textM.setLineWrap(true);
         textM.hide();
         panel.add(textM);
 
-        step3Button.setBounds(10,310,100,25);
+        scrollerTextM = new JScrollPane(textM, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollerTextM.setBounds(10,310,300,100);
+        scrollerTextM.hide();
+        panel.add(scrollerTextM);
+
+        step3Button.setBounds(10,420,100,25);
         step3Button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -217,19 +243,31 @@ public class main {
         step3Button.hide();
         panel.add(step3Button);
 
-        labelM.setBounds(10,340,200,50);
+        labelM.setBounds(10,450,200,50);
         labelM.setLineWrap(true);
         labelM.setEditable(false);
         labelM.hide();
+        labelM.setBorder(new EmptyBorder(10, 10, 10, 10));
         panel.add(labelM);
 
-        labelC.setBounds(10,395,200,200);
+        scrollerLabelM = new JScrollPane(labelM, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollerLabelM.setBounds(10,450,300,100);
+        scrollerLabelM.hide();
+        panel.add(scrollerLabelM);
+
+        labelC.setBounds(10,555,300,200);
         labelC.setLineWrap(true);
         labelC.setEditable(false);
         labelC.hide();
+        labelC.setBorder(new EmptyBorder(10, 10, 10, 10));
         panel.add(labelC);
 
-        errorLabelEncrypt.setBounds(10, 35, 500, 20);
+        scrollerLabelC = new JScrollPane(labelC, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollerLabelC.setBounds(10,555,300,200);
+        scrollerLabelC.hide();
+        panel.add(scrollerLabelC);
+
+        errorLabelEncrypt.setBounds(10, 35, 300, 20);
         errorLabelEncrypt.setForeground(Color.RED);
         panel.add(errorLabelEncrypt);
     }
@@ -274,6 +312,7 @@ public class main {
         labelE.setText("e is " + e);
         labelInputM.show();
         textM.show();
+        scrollerTextM.show();
         step3Button.show();
     }
 
@@ -283,10 +322,13 @@ public class main {
 
         m = convertToBigIntegerArray(mText);
         labelM.show();
+        scrollerLabelM.show();
         labelM.setText("m is " + Arrays.toString(m));
+        labelM.getPreferredSize();
 
         c = encryptMessage();
         labelC.show();
+        scrollerLabelC.show();
         labelC.setText("c is " + Arrays.toString(c));
     }
 
@@ -311,6 +353,7 @@ public class main {
 
                 labelDEInputC.show();
                 textDEC.show();
+                scrollerLabelDEC.show();
                 step2DCButton.show();
             }
             else {
@@ -332,6 +375,9 @@ public class main {
             messageResult += c;
         }
         labelDEM.setText("Message after decryption is: " + messageResult);
+        labelDEM.show();
+        scrollerLabelDEM.show();
+        System.out.println("Message after decryption is: " + messageResult);
     }
 
     private static BigInteger convertToBigInteger(String stringN){
